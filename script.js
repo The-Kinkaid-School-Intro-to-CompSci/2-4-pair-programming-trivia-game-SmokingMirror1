@@ -211,7 +211,11 @@ function handleQuestionSubmit(event){
 
     //Step 4A:
     //loop through the answers to find the selected answer and the correct answer
-
+    for(let answer of answers){
+        if (answer.checked){
+            selectedAnswer = answer.value;
+        }
+    }
     //Step 4B:
     //update the score based on the selected answer and the correct answer
     //also add one to the questionsAnswered
@@ -247,7 +251,15 @@ function createQuestionCard(question){
     //Step 3A: Create the header of the card
     console.log(question);
     //create a header (div element) with class card-header
-
+    let header = document.createElement(`div`);
+    header.classList.add(`card-header`);
+    let title = document.createElement(`h5`);
+    title.textContent = `${question.question}`;
+    header.appendChild(title);
+    let category = document.createElement(`h6`);
+    category.textContent = `${question.category}`;
+    header.appendChild(category);
+    questionCard.appendChild(header);
     //create an title (h5 element) with the class card-title
     //the title should say the question
 
@@ -279,7 +291,10 @@ function createQuestionCard(question){
 
     //Part 3B: 
     //for each incorrect answer, make an input with type radio and class form-check input, call the function createFormCheckInput
-    
+    for (let answer of question.incorrect_answers){
+        let incorrectAnswerFormCheck = createFormCheckInput (question, false, answer);
+        cardBody.appendChild(incorrectAnswerFormCheck);
+    }
 
     //append the cardBody to the form
     form.appendChild(cardBody);
@@ -327,18 +342,21 @@ function createQuestionCard(question){
  */
 async function getQuestions(){
     console.log("Fetching questions from the API");
-    const baseURL = 'https://opentdb.com/api.php?amount=1';
+    const baseURL = 'https://opentdb.com/api.php?';
     
     //Step 1: get the user input (number of questions to get)
     //get the number of questions to fetch from the user input
-
+    const userNumSelector = document.querySelector('#numberOfQuestions')
+    let userNum = userNumSelector.value
+    let userNumString = `amount=${userNum}`
     //update the totalQuestions variable
 
     //Step 2: get the user input (category)
-
-
+    const userCategorySelector = document.querySelector('#categorySelect')
+    let userCategory = userCategorySelector.value
+    let userCategoryString = `category=${userCategory}`
     //build the full URL
-    const fullURL = `${baseURL}`;
+    const fullURL = `${baseURL}${userNumString}&${userCategoryString}`;
     console.log("Full URL: ", fullURL);
     //make the fetch request
     const response = await fetch(fullURL);
